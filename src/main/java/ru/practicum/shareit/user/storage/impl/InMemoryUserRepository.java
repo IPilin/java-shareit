@@ -47,9 +47,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User update(Long userId, User user) {
-        var updatedUser = findById(userId);
-        updatedUser.update(user);
-        return findById(userId);
+        return findById(userId).update(user);
     }
 
     @Override

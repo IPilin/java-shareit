@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.marker.OnCreate;
 import ru.practicum.shareit.marker.OnUpdate;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.Collection;
@@ -25,18 +26,18 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable("userId") Long userId) {
+    public UserDto getUserById(@PathVariable("userId") Long userId) {
         return userService.getUserById(userId);
     }
 
     @PostMapping
-    public User createUser(@RequestBody @Validated(OnCreate.class) User user) {
+    public UserDto createUser(@RequestBody @Validated(OnCreate.class) UserDto user) {
         return userService.createUser(user);
     }
 
     @PatchMapping("/{userId}")
-    public User updateUser(@PathVariable("userId") Long userId,
-                           @RequestBody @Validated(OnUpdate.class) User user) {
+    public UserDto updateUser(@PathVariable("userId") Long userId,
+                           @RequestBody @Validated(OnUpdate.class) UserDto user) {
         return userService.updateUser(userId, user);
     }
 

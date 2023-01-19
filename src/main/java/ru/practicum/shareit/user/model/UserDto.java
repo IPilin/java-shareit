@@ -9,19 +9,16 @@ import ru.practicum.shareit.marker.OnCreate;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
 
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
+public class UserDto {
     Long id;
+    @NotNull(groups = OnCreate.class)
+    @NotBlank(groups = OnCreate.class)
     String name;
+    @NotNull(groups = OnCreate.class)
+    @Email(groups = OnCreate.class)
     String email;
-
-    public User update(User user) {
-        Optional.ofNullable(user.getName()).ifPresent((name) -> this.name = name);
-        Optional.ofNullable(user.getEmail()).ifPresent((email) -> this.email = email);
-        return this;
-    }
 }
