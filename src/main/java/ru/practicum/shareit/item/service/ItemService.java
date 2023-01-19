@@ -9,4 +9,5 @@ public interface ItemService {
     ItemDto getItemById(Long itemId);
     ItemDto createItem(Long userId, ItemDto itemDto);
     ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto);
+    Collection<ItemDto> search(String text);
 }

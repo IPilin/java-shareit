@@ -41,4 +41,9 @@ public class ItemController {
                               @RequestBody @Validated(OnUpdate.class) ItemDto itemDto) {
         return itemService.updateItem(userId, itemId, itemDto);
     }
+
+    @GetMapping("/search")
+    public Collection<ItemDto> searchItems(@RequestParam("text") String text) {
+        return itemService.search(text);
+    }
 }

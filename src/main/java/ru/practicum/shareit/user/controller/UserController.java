@@ -5,7 +5,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.marker.OnCreate;
 import ru.practicum.shareit.marker.OnUpdate;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -21,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public Collection<User> getAllUsers() {
+    public Collection<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
 

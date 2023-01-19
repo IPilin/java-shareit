@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.ValidationException;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.storage.UserRepository;
@@ -17,8 +16,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public Collection<User> getAllUsers() {
-        return userRepository.findAll();
+    public Collection<UserDto> getAllUsers() {
+        return UserMapper.toDto(userRepository.findAll());
     }
 
     @Override
