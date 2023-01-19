@@ -7,6 +7,7 @@ import java.util.Collection;
 public interface UserRepository {
     Collection<User> findAll();
     User findById(Long userId);
+    User findByEmail(String email);
     User create(User user);
     User update(Long userId, User user);
     void remove(Long userId);

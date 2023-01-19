@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.storage.impl;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -20,7 +21,21 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User findById(Long userId) {
+        var user = users.get(userId);
+        if (user == null) {
+            throw new NotFoundException(String.format("User with %d id not found.", userId));
+        }
         return users.get(userId);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        for (var user : users.values()) {
+            if (user.getEmail().equals(email)) {
+                return user;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -32,7 +47,9 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public User update(Long userId, User user) {
-        return users.put(userId, user);
+        var updatedUser = findById(userId);
+        updatedUser.update(user);
+        return findById(userId);
     }
 
     @Override
