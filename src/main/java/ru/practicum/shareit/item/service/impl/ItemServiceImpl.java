@@ -18,6 +18,7 @@ import java.util.Objects;
 public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final UserService userService;
+
     @Override
     public Collection<ItemDto> getAllUserItems(Long userId) {
         return ItemMapper.toDto(itemStorage.getAllUserItems(userId));
