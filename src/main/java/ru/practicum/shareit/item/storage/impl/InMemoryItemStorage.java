@@ -16,7 +16,7 @@ public class InMemoryItemStorage implements ItemStorage {
     private long nextId = 1L;
 
     @Override
-    public Collection<Item> getAllUserItems(Long userId) {
+    public Collection<Item> getAll(Long userId) {
         return items.values().stream()
                 .filter((item) -> Objects.equals(item.getOwnerId(), userId))
                 .collect(Collectors.toList());

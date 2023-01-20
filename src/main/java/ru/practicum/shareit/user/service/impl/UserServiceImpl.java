@@ -16,17 +16,17 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public Collection<UserDto> getAllUsers() {
+    public Collection<UserDto> getAll() {
         return UserMapper.toDto(userRepository.findAll());
     }
 
     @Override
-    public UserDto getUserById(Long userId) {
+    public UserDto getById(Long userId) {
         return UserMapper.toDto(userRepository.findById(userId));
     }
 
     @Override
-    public UserDto createUser(UserDto user) {
+    public UserDto create(UserDto user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new ValidationException("This email is already exists.");
         }
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Long userId, UserDto user) {
+    public UserDto update(Long userId, UserDto user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new ValidationException("This email is already exists.");
         }
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long userId) {
+    public void delete(Long userId) {
         userRepository.remove(userId);
     }
 }

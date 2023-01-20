@@ -20,24 +20,24 @@ public class ItemServiceImpl implements ItemService {
     private final UserService userService;
 
     @Override
-    public Collection<ItemDto> getAllUserItems(Long userId) {
-        return ItemMapper.toDto(itemStorage.getAllUserItems(userId));
+    public Collection<ItemDto> getItems(Long userId) {
+        return ItemMapper.toDto(itemStorage.getAll(userId));
     }
 
     @Override
-    public ItemDto getItemById(Long itemId) {
+    public ItemDto getById(Long itemId) {
         return ItemMapper.toDto(itemStorage.findById(itemId));
     }
 
     @Override
-    public ItemDto createItem(Long userId, ItemDto itemDto) {
+    public ItemDto create(Long userId, ItemDto itemDto) {
         var item = ItemMapper.fromDto(itemDto);
-        item.setOwnerId(userService.getUserById(userId).getId());
+        item.setOwnerId(userService.getById(userId).getId());
         return ItemMapper.toDto(itemStorage.create(item));
     }
 
     @Override
-    public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
+    public ItemDto update(Long userId, Long itemId, ItemDto itemDto) {
         if (!Objects.equals(itemStorage.findById(itemId).getOwnerId(), userId)) {
             throw new WrongAccessException("You not the owner of that item.");
         }

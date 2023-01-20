@@ -21,25 +21,25 @@ public class ItemController {
 
     @GetMapping
     public Collection<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getAllUserItems(userId);
+        return itemService.getItems(userId);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable("itemId") Long itemId) {
-        return itemService.getItemById(itemId);
+        return itemService.getById(itemId);
     }
 
     @PostMapping
     public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                               @RequestBody @Validated(OnCreate.class) ItemDto itemDto) {
-        return itemService.createItem(userId, itemDto);
+        return itemService.create(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                               @PathVariable("itemId") Long itemId,
                               @RequestBody @Validated(OnUpdate.class) ItemDto itemDto) {
-        return itemService.updateItem(userId, itemId, itemDto);
+        return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/search")
