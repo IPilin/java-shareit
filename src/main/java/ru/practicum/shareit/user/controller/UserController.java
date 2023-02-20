@@ -5,6 +5,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.marker.OnCreate;
 import ru.practicum.shareit.marker.OnUpdate;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -26,7 +27,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserDto getUserById(@PathVariable("userId") Long userId) {
-        return userService.getById(userId);
+        return UserMapper.toDto(userService.findById(userId));
     }
 
     @PostMapping

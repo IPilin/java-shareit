@@ -2,12 +2,14 @@ package ru.practicum.shareit.user.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.model.ValidationException;
+import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 
 @Service
@@ -21,28 +23,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getById(Long userId) {
-        return UserMapper.toDto(userRepository.findById(userId));
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found."));
     }
 
+    @Transactional
     @Override
     public UserDto create(UserDto user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new ValidationException("This email is already exists.");
-        }
-        return UserMapper.toDto(userRepository.create(UserMapper.fromDto(user)));
+        return UserMapper.toDto(userRepository.save(UserMapper.fromDto(user)));
     }
 
     @Override
     public UserDto update(Long userId, UserDto user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new ValidationException("This email is already exists.");
-        }
-        return UserMapper.toDto(userRepository.update(userId, UserMapper.fromDto(user)));
+        var updatedUser = findById(userId);
+        updatedUser.update(UserMapper.fromDto(user));
+        return UserMapper.toDto(userRepository.save(updatedUser));
     }
 
     @Override
     public void delete(Long userId) {
-        userRepository.remove(userId);
+        userRepository.deleteById(userId);
     }
 }
