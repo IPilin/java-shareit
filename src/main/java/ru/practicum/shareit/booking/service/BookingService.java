@@ -13,6 +13,7 @@ public interface BookingService {
     BookingOutDto approve(Long userId, Long bookingId, Boolean approve);
 
     Booking findById(Long userId, Long bookingId);
+
     BookingOutDto findByIdDto(Long userId, Long bookingId);
 
     Collection<BookingOutDto> findAll(Long userId, State state);
