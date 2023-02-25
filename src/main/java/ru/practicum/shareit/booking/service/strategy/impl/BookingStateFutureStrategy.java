@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service.strategy.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
@@ -17,11 +18,13 @@ public class BookingStateFutureStrategy implements BookingStateFetchStrategy {
     private final BookingRepository bookingRepository;
 
     @Override
-    public List<Booking> findBookingList(User booker, Boolean owner) {
+    public List<Booking> findBookingList(User booker, Boolean owner, Integer from, Integer size) {
         if (owner) {
-            return bookingRepository.findAllByItemOwnerIdAndStartAfter(booker.getId(), LocalDateTime.now(), SORT_BY_DESC);
+            return bookingRepository.findAllByItemOwnerIdAndStartAfter(booker.getId(), LocalDateTime.now(),
+                    PageRequest.of(from / size, size, SORT_BY_DESC));
         }
-        return bookingRepository.findAllByBookerAndStartAfter(booker, LocalDateTime.now(), SORT_BY_DESC);
+        return bookingRepository.findAllByBookerAndStartAfter(booker, LocalDateTime.now(),
+                PageRequest.of(from / size, size, SORT_BY_DESC));
     }
 
     @Override

@@ -13,8 +13,11 @@ import ru.practicum.shareit.marker.OnCreate;
 import ru.practicum.shareit.marker.OnUpdate;
 
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.Collection;
 
+@Validated
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -22,8 +25,10 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public Collection<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getItems(userId);
+    public Collection<ItemDto> getAllItems(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                           @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero int from,
+                                           @RequestParam(value = "size", defaultValue = "5") @Positive int size) {
+        return itemService.getItems(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -46,8 +51,10 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> searchItems(@RequestParam("text") String text) {
-        return itemService.search(text);
+    public Collection<ItemDto> searchItems(@RequestParam("text") String text,
+                                           @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero int from,
+                                           @RequestParam(value = "size", defaultValue = "5") @Positive int size) {
+        return itemService.search(text, from, size);
     }
 
     @PostMapping("{itemId}/comment")

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service.strategy.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -21,11 +22,13 @@ public class BookingStateWaitingStrategy implements BookingStateFetchStrategy {
     }
 
     @Override
-    public List<Booking> findBookingList(User booker, Boolean owner) {
+    public List<Booking> findBookingList(User booker, Boolean owner, Integer from, Integer size) {
         if (owner) {
-            return bookingRepository.findAllByItemOwnerIdAndStatusEquals(booker.getId(), BookingStatus.WAITING, SORT_BY_DESC);
+            return bookingRepository.findAllByItemOwnerIdAndStatusEquals(booker.getId(), BookingStatus.WAITING,
+                    PageRequest.of(from / size, size, SORT_BY_DESC));
         }
-        return bookingRepository.findAllByBookerAndStatusEquals(booker, BookingStatus.WAITING, SORT_BY_DESC);
+        return bookingRepository.findAllByBookerAndStatusEquals(booker, BookingStatus.WAITING,
+                PageRequest.of(from / size, size, SORT_BY_DESC));
     }
 
     @Override

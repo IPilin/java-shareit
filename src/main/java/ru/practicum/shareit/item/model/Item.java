@@ -27,6 +27,8 @@ public class Item {
     Boolean available;
     @Column(name = "owner_id")
     Long ownerId;
+    @Column(name = "request_id")
+    Long requester;
     @Transient
     Set<Comment> comments;
     @Transient

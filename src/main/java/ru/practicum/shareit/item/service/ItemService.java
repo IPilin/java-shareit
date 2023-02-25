@@ -8,7 +8,7 @@ import ru.practicum.shareit.item.model.ItemDto;
 import java.util.Collection;
 
 public interface ItemService {
-    Collection<ItemDto> getItems(Long userId);
+    Collection<ItemDto> getItems(Long userId, Integer from, Integer size);
 
     Item findById(Long itemId);
 
@@ -18,7 +18,7 @@ public interface ItemService {
 
     ItemDto update(Long userId, Long itemId, ItemDto itemDto);
 
-    Collection<ItemDto> search(String text);
+    Collection<ItemDto> search(String text, Integer from, Integer size);
 
     CommentOutDto comment(Comment comment, Long itemId, Long userId);
 }

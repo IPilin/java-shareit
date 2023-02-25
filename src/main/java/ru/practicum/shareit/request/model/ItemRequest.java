@@ -8,7 +8,7 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Collection;
 
 @Entity
 @Table(name = "requests")
@@ -31,5 +31,5 @@ public class ItemRequest {
     @CreatedDate
     LocalDateTime created;
     @Transient
-    Set<Item> items;
+    Collection<Item> items;
 }

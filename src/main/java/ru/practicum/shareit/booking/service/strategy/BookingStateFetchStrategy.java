@@ -10,7 +10,7 @@ import java.util.List;
 public interface BookingStateFetchStrategy {
     Sort SORT_BY_DESC = Sort.by(Sort.Direction.DESC, "start");
 
-    List<Booking> findBookingList(User booker, Boolean owner);
+    List<Booking> findBookingList(User booker, Boolean owner, Integer from, Integer size);
 
     State getStrategyState();
 }

@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking.storage;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.model.Booking;
@@ -13,25 +13,25 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    List<Booking> findAllByBooker(User booker, Sort sort);
+    List<Booking> findAllByBooker(User booker, Pageable pageable);
 
-    List<Booking> findAllByBookerAndEndBefore(User booker, LocalDateTime time, Sort sort);
+    List<Booking> findAllByBookerAndEndBefore(User booker, LocalDateTime time, Pageable pageable);
 
-    List<Booking> findAllByBookerAndStartAfter(User booker, LocalDateTime time, Sort sort);
+    List<Booking> findAllByBookerAndStartAfter(User booker, LocalDateTime time, Pageable pageable);
 
-    List<Booking> findAllByBookerAndStartBeforeAndEndAfter(User booker, LocalDateTime time, LocalDateTime timeNow, Sort sort);
+    List<Booking> findAllByBookerAndStartBeforeAndEndAfter(User booker, LocalDateTime time, LocalDateTime timeNow, Pageable pageable);
 
-    List<Booking> findAllByBookerAndStatusEquals(User booker, BookingStatus status, Sort sort);
+    List<Booking> findAllByBookerAndStatusEquals(User booker, BookingStatus status, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerId(Long owner, Sort sort);
+    List<Booking> findAllByItemOwnerId(Long owner, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerIdAndEndBefore(Long owner, LocalDateTime time, Sort sort);
+    List<Booking> findAllByItemOwnerIdAndEndBefore(Long owner, LocalDateTime time, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerIdAndStartAfter(Long owner, LocalDateTime time, Sort sort);
+    List<Booking> findAllByItemOwnerIdAndStartAfter(Long owner, LocalDateTime time, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfter(Long owner, LocalDateTime time, LocalDateTime timeNow, Sort sort);
+    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfter(Long owner, LocalDateTime time, LocalDateTime timeNow, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerIdAndStatusEquals(Long owner, BookingStatus status, Sort sort);
+    List<Booking> findAllByItemOwnerIdAndStatusEquals(Long owner, BookingStatus status, Pageable pageable);
 
     @Query(value = "select * " +
             "from bookings b " +

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service.strategy.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -17,11 +18,13 @@ public class BookingStateRejectedStrategy implements BookingStateFetchStrategy {
     private final BookingRepository bookingRepository;
 
     @Override
-    public List<Booking> findBookingList(User booker, Boolean owner) {
+    public List<Booking> findBookingList(User booker, Boolean owner, Integer from, Integer size) {
         if (owner) {
-            return bookingRepository.findAllByItemOwnerIdAndStatusEquals(booker.getId(), BookingStatus.REJECTED, SORT_BY_DESC);
+            return bookingRepository.findAllByItemOwnerIdAndStatusEquals(booker.getId(), BookingStatus.REJECTED,
+                    PageRequest.of(from / size, size, SORT_BY_DESC));
         }
-        return bookingRepository.findAllByBookerAndStatusEquals(booker, BookingStatus.REJECTED, SORT_BY_DESC);
+        return bookingRepository.findAllByBookerAndStatusEquals(booker, BookingStatus.REJECTED,
+                PageRequest.of(from / size, size, SORT_BY_DESC));
     }
 
     @Override

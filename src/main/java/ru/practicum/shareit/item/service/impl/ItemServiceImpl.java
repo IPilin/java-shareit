@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -34,8 +35,8 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
 
     @Override
-    public Collection<ItemDto> getItems(Long userId) {
-        var items = itemStorage.findAllByOwnerIdOrderById(userId);
+    public Collection<ItemDto> getItems(Long userId, Integer from, Integer size) {
+        var items = itemStorage.findAllByOwnerIdOrderById(userId, PageRequest.of(from / size, size));
         items.forEach(this::setBookingsToItem);
         return ItemMapper.toDto(items);
     }
@@ -76,8 +77,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> search(String text) {
-        return text.isEmpty() ? new ArrayList<>() : ItemMapper.toDto(itemStorage.search(text));
+    public Collection<ItemDto> search(String text, Integer from, Integer size) {
+        return text.isEmpty() ? new ArrayList<>() : ItemMapper.toDto(itemStorage.search(text,
+                PageRequest.of(from / size, size)));
     }
 
     @Transactional

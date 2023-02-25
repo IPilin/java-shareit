@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import ru.practicum.shareit.item.model.ItemDto;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Collection;
 
 @Data
 @Builder
@@ -16,5 +16,5 @@ public class ItemRequestOutDto {
     Long id;
     String description;
     LocalDateTime created;
-    Set<ItemDto> items;
+    Collection<ItemDto> items;
 }
