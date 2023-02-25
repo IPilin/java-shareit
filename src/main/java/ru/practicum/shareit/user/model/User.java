@@ -1,23 +1,31 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import javax.persistence.*;
 import java.util.Optional;
 
+@Entity
+@Table(name = "users")
 @Data
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     Long id;
+    @Column
     String name;
+    @Column(unique = true)
     String email;
 
-    public User update(User user) {
+    public void update(User user) {
         Optional.ofNullable(user.getName()).ifPresent((name) -> this.name = name);
         Optional.ofNullable(user.getEmail()).ifPresent((email) -> this.email = email);
-        return this;
     }
 }
