@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.model.ValidationException;
+import ru.practicum.shareit.exception.model.WrongAccessException;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemDto;
@@ -81,6 +82,7 @@ class ItemServiceTest {
         assertThat(updatedItem.getName()).isEqualTo("nameUpdated");
         assertThat(updatedItem.getDescription()).isEqualTo("itemDescription");
         assertThat(updatedItem.getAvailable()).isEqualTo(true);
+        assertThrows(WrongAccessException.class, () -> service.update(2L, 1L, itemShortDto));
     }
 
     @Test

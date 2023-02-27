@@ -40,6 +40,18 @@ class UserServiceTest {
     }
 
     @Test
+    void update_Test() {
+        var user = new User(1L, "name", "email");
+        var userDto = UserMapper.toDto(user);
+        when(repository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        when(repository.save(any()))
+                .thenReturn(user);
+
+        assertEquals(userDto, service.update(1L, userDto));
+    }
+
+    @Test
     void findById_whenUserFound_thenReturnedUser() {
         long userId = 0L;
         User user = new User();
