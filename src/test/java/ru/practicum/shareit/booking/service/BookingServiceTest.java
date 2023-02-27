@@ -1,14 +1,19 @@
 package ru.practicum.shareit.booking.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.booking.dto.BookingInDto;
 import ru.practicum.shareit.booking.dto.BookingOutDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.impl.BookingServiceImpl;
+import ru.practicum.shareit.booking.service.strategy.BookingStateStrategyFactory;
+import ru.practicum.shareit.booking.service.strategy.impl.*;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
@@ -18,6 +23,9 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.impl.UserServiceImpl;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -27,7 +35,21 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class BookingServiceTest {
+    BookingStateStrategyFactory factory;
+    @Mock
+    BookingStateAllStrategy allStrategy;
+    @Mock
+    BookingStateCurrentStrategy currentStrategy;
+    @Mock
+    BookingStateFutureStrategy futureStrategy;
+    @Mock
+    BookingStatePastStrategy pastStrategy;
+    @Mock
+    BookingStateRejectedStrategy rejectedStrategy;
+    @Mock
+    BookingStateWaitingStrategy waitingStrategy;
     BookingService service;
     @Mock
     BookingRepository repository;
@@ -42,11 +64,22 @@ public class BookingServiceTest {
 
     @BeforeEach
     public void setup() {
-        service = new BookingServiceImpl(repository, itemService, userService, null);
         user = new User(2L, "userName", "user@email.ru");
         item = new Item(1L, "itemName", "itemDescription", true, 1L, null, null, null, null);
         bookingShortDto = new BookingInDto(1L, LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(1));
         booking = new Booking(1L, bookingShortDto.getStart(), bookingShortDto.getEnd(), item, user, BookingStatus.WAITING);
+
+        allStrategy = new BookingStateAllStrategy(repository);
+        currentStrategy = new BookingStateCurrentStrategy(repository);
+        futureStrategy = new BookingStateFutureStrategy(repository);
+        pastStrategy = new BookingStatePastStrategy(repository);
+        rejectedStrategy = new BookingStateRejectedStrategy(repository);
+        waitingStrategy = new BookingStateWaitingStrategy(repository);
+
+        factory = new BookingStateStrategyFactory(new HashSet<>(Arrays.asList(
+                allStrategy, currentStrategy, futureStrategy, pastStrategy, rejectedStrategy, waitingStrategy
+        )));
+        service = new BookingServiceImpl(repository, itemService, userService, factory);
     }
 
     @Test
@@ -113,5 +146,56 @@ public class BookingServiceTest {
         assertThat(foundBookingDto.getItem().getId()).isEqualTo(item.getId());
 
         assertThrows(NotFoundException.class, () -> service.findById(3L, 4L));
+    }
+
+    @Test
+    void findAllByBookerId() {
+        when(userService.findById(anyLong()))
+                .thenReturn(user);
+
+        var bookings = List.of(booking);
+
+        when(repository.findAllByBooker(any(), any()))
+                .thenReturn(bookings);
+        when(repository.findAllByBookerAndStartBeforeAndEndAfter(any(), any(), any(), any()))
+                .thenReturn(bookings);
+        when(repository.findAllByBookerAndEndBefore(any(), any(), any()))
+                .thenReturn(bookings);
+        when(repository.findAllByBookerAndStartAfter(any(), any(), any()))
+                .thenReturn(bookings);
+        when(repository.findAllByBookerAndStatusEquals(any(), any(), any()))
+                .thenReturn(bookings);
+
+
+        assertThat(service.findAll(booking.getBooker().getId(), State.ALL, 0, 20).size()).isEqualTo(1);
+        assertThat(service.findAll(booking.getBooker().getId(), State.CURRENT, 0, 20).size()).isEqualTo(1);
+        assertThat(service.findAll(booking.getBooker().getId(), State.PAST, 0, 20).size()).isEqualTo(1);
+        assertThat(service.findAll(booking.getBooker().getId(), State.FUTURE, 0, 20).size()).isEqualTo(1);
+        assertThat(service.findAll(booking.getBooker().getId(), State.WAITING, 0, 20).size()).isEqualTo(1);
+    }
+
+    @Test
+    void findAllByOwnerId() {
+        when(userService.findById(anyLong()))
+                .thenReturn(user);
+
+        var bookings = List.of(booking);
+
+        when(repository.findAllByItemOwnerId(anyLong(), any()))
+                .thenReturn(bookings);
+        when(repository.findAllByItemOwnerIdAndStartBeforeAndEndAfter(anyLong(), any(), any(), any()))
+                .thenReturn(bookings);
+        when(repository.findAllByItemOwnerIdAndEndBefore(anyLong(), any(), any()))
+                .thenReturn(bookings);
+        when(repository.findAllByItemOwnerIdAndStartAfter(anyLong(), any(), any()))
+                .thenReturn(bookings);
+        when(repository.findAllByItemOwnerIdAndStatusEquals(anyLong(), any(), any()))
+                .thenReturn(bookings);
+
+        assertThat(service.findAllOwner(booking.getItem().getOwnerId(), State.ALL, 0, 20).size()).isEqualTo(1);
+        assertThat(service.findAllOwner(booking.getItem().getOwnerId(), State.CURRENT, 0, 20).size()).isEqualTo(1);
+        assertThat(service.findAllOwner(booking.getItem().getOwnerId(), State.PAST, 0, 20).size()).isEqualTo(1);
+        assertThat(service.findAllOwner(booking.getItem().getOwnerId(), State.FUTURE, 0, 20).size()).isEqualTo(1);
+        assertThat(service.findAllOwner(booking.getItem().getOwnerId(), State.WAITING, 0, 20).size()).isEqualTo(1);
     }
 }
