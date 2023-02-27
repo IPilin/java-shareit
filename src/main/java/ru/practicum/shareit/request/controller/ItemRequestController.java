@@ -22,7 +22,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestOutDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                           @RequestBody @Validated(OnCreate.class)ItemRequestInDto itemRequest) {
+                                    @RequestBody @Validated(OnCreate.class) ItemRequestInDto itemRequest) {
         return itemRequestService.create(userId, ItemRequestMapper.fromDto(itemRequest));
     }
 

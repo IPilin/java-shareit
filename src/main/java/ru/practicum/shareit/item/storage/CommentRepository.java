@@ -9,6 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public interface CommentStorage extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
     Set<Comment> findByItemIn(List<Item> items);
 }
