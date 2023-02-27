@@ -56,8 +56,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestOutDto findById(Long userId, Long requestId) {
         userService.findById(userId);
-        var request = itemRequestRepository.findById(requestId).
-                orElseThrow(() -> new NotFoundException("ItemRequest not found."));
+        var request = itemRequestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("ItemRequest not found."));
         loadItems(List.of(request));
         return ItemRequestMapper.toDto(request);
     }
