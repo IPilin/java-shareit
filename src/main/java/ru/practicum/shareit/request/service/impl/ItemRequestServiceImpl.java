@@ -2,7 +2,6 @@ package ru.practicum.shareit.request.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
@@ -15,7 +14,6 @@ import ru.practicum.shareit.request.storage.ItemRequestRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
@@ -44,11 +42,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public Collection<ItemRequestOutDto> findAll(Long userId, int from, int size) {
-        userService.findById(userId);
-        var sortByCreated = Sort.by(Sort.Direction.DESC, "created");
-        var requests = itemRequestRepository.findAll(PageRequest.of(from / size, size, sortByCreated)).stream()
-                        .filter(itemRequest -> !itemRequest.getRequester().getId().equals(userId))
-                        .collect(Collectors.toList());
+        var user = userService.findById(userId);
+        var requests = itemRequestRepository.findByRequesterNotOrderByCreated(user, PageRequest.of(from / size, size));
         loadItems(requests);
         return ItemRequestMapper.toDto(requests);
     }

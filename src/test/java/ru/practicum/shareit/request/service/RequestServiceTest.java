@@ -4,9 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestInDto;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -77,10 +74,8 @@ class RequestServiceTest {
     void findAll() {
         request.setRequester(new User(2L, "name2", "email2@email.ru"));
 
-        var requests = new PageImpl<>(List.of(request));
-
-        when(repository.findAll(PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "created"))))
-                .thenReturn(requests);
+        when(repository.findByRequesterNotOrderByCreated(any(), any()))
+                .thenReturn(List.of(request));
 
         var requestDtos = new ArrayList<>(service.findAll(requestor.getId(), 0, 20));
 
