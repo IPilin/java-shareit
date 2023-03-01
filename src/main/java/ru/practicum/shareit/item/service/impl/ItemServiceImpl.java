@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -15,8 +16,8 @@ import ru.practicum.shareit.item.model.CommentOutDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.storage.CommentStorage;
-import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.item.storage.CommentRepository;
+import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;
@@ -28,21 +29,21 @@ import static java.util.stream.Collectors.*;
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemStorage itemStorage;
-    private final CommentStorage commentStorage;
+    private final ItemRepository itemRepository;
+    private final CommentRepository commentRepository;
     private final UserService userService;
     private final BookingRepository bookingRepository;
 
     @Override
-    public Collection<ItemDto> getItems(Long userId) {
-        var items = itemStorage.findAllByOwnerIdOrderById(userId);
+    public Collection<ItemDto> getItems(Long userId, Integer from, Integer size) {
+        var items = itemRepository.findAllByOwnerIdOrderById(userId, PageRequest.of(from / size, size));
         items.forEach(this::setBookingsToItem);
         return ItemMapper.toDto(items);
     }
 
     @Override
     public Item findById(Long itemId) {
-        return itemStorage.findById(itemId).orElseThrow(() -> new NotFoundException("Item not found."));
+        return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item not found."));
     }
 
     @Override
@@ -60,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto create(Long userId, ItemDto itemDto) {
         var item = ItemMapper.fromDto(itemDto);
         item.setOwnerId(userService.findById(userId).getId());
-        return ItemMapper.toDto(itemStorage.save(item));
+        return ItemMapper.toDto(itemRepository.save(item));
     }
 
     @Override
@@ -72,12 +73,13 @@ public class ItemServiceImpl implements ItemService {
         var updatedItem = findById(itemId);
         updatedItem.update(ItemMapper.fromDto(itemDto));
 
-        return ItemMapper.toDto(itemStorage.save(updatedItem));
+        return ItemMapper.toDto(itemRepository.save(updatedItem));
     }
 
     @Override
-    public Collection<ItemDto> search(String text) {
-        return text.isEmpty() ? new ArrayList<>() : ItemMapper.toDto(itemStorage.search(text));
+    public Collection<ItemDto> search(String text, Integer from, Integer size) {
+        return text.isEmpty() ? new ArrayList<>() : ItemMapper.toDto(itemRepository.search(text,
+                PageRequest.of(from / size, size)));
     }
 
     @Transactional
@@ -93,7 +95,7 @@ public class ItemServiceImpl implements ItemService {
         comment.setItem(item);
         comment.setAuthor(user);
 
-        return CommentMapper.toDto(commentStorage.save(comment));
+        return CommentMapper.toDto(commentRepository.save(comment));
     }
 
     private void setBookingsToItem(Item item) {
@@ -104,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void loadComments(List<Item> items) {
-        Map<Item, Set<Comment>> comments = commentStorage.findByItemIn(items)
+        Map<Item, Set<Comment>> comments = commentRepository.findByItemIn(items)
                 .stream()
                 .collect(groupingBy(Comment::getItem, toSet()));
 

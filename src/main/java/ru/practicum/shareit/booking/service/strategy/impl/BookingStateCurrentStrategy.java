@@ -17,13 +17,13 @@ public class BookingStateCurrentStrategy implements BookingStateFetchStrategy {
     private final BookingRepository bookingRepository;
 
     @Override
-    public List<Booking> findBookingList(User booker, Boolean owner) {
+    public List<Booking> findBookingList(User booker, Boolean owner, Integer from, Integer size) {
         if (owner) {
             return bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfter(booker.getId(), LocalDateTime.now(),
-                    LocalDateTime.now(), SORT_BY_DESC);
+                    LocalDateTime.now(), getRequest(from, size));
         }
         return bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(booker, LocalDateTime.now(),
-                LocalDateTime.now(), SORT_BY_DESC);
+                LocalDateTime.now(), getRequest(from, size));
     }
 
     @Override

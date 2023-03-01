@@ -16,11 +16,11 @@ public class BookingStateAllStrategy implements BookingStateFetchStrategy {
     private final BookingRepository bookingRepository;
 
     @Override
-    public List<Booking> findBookingList(User booker, Boolean owner) {
+    public List<Booking> findBookingList(User booker, Boolean owner, Integer from, Integer size) {
         if (owner) {
-            return bookingRepository.findAllByItemOwnerId(booker.getId(), SORT_BY_DESC);
+            return bookingRepository.findAllByItemOwnerId(booker.getId(), getRequest(from, size));
         }
-        return bookingRepository.findAllByBooker(booker, SORT_BY_DESC);
+        return bookingRepository.findAllByBooker(booker, getRequest(from, size));
     }
 
     @Override

@@ -17,11 +17,13 @@ public class BookingStateRejectedStrategy implements BookingStateFetchStrategy {
     private final BookingRepository bookingRepository;
 
     @Override
-    public List<Booking> findBookingList(User booker, Boolean owner) {
+    public List<Booking> findBookingList(User booker, Boolean owner, Integer from, Integer size) {
         if (owner) {
-            return bookingRepository.findAllByItemOwnerIdAndStatusEquals(booker.getId(), BookingStatus.REJECTED, SORT_BY_DESC);
+            return bookingRepository.findAllByItemOwnerIdAndStatusEquals(booker.getId(), BookingStatus.REJECTED,
+                    getRequest(from, size));
         }
-        return bookingRepository.findAllByBookerAndStatusEquals(booker, BookingStatus.REJECTED, SORT_BY_DESC);
+        return bookingRepository.findAllByBookerAndStatusEquals(booker, BookingStatus.REJECTED,
+                getRequest(from, size));
     }
 
     @Override

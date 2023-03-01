@@ -21,11 +21,13 @@ public class BookingStateWaitingStrategy implements BookingStateFetchStrategy {
     }
 
     @Override
-    public List<Booking> findBookingList(User booker, Boolean owner) {
+    public List<Booking> findBookingList(User booker, Boolean owner, Integer from, Integer size) {
         if (owner) {
-            return bookingRepository.findAllByItemOwnerIdAndStatusEquals(booker.getId(), BookingStatus.WAITING, SORT_BY_DESC);
+            return bookingRepository.findAllByItemOwnerIdAndStatusEquals(booker.getId(), BookingStatus.WAITING,
+                    getRequest(from, size));
         }
-        return bookingRepository.findAllByBookerAndStatusEquals(booker, BookingStatus.WAITING, SORT_BY_DESC);
+        return bookingRepository.findAllByBookerAndStatusEquals(booker, BookingStatus.WAITING,
+                getRequest(from, size));
     }
 
     @Override

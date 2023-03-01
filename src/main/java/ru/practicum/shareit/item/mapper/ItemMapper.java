@@ -14,6 +14,7 @@ public class ItemMapper {
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
+                .requester(itemDto.getRequestId())
                 .build();
     }
 
@@ -23,6 +24,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(item.getRequester())
                 .comments(item.getComments() == null ? null : CommentMapper.toDto(item.getComments()))
                 .lastBooking(item.getLastBooking() == null ? null : BookingMapper.toDto(item.getLastBooking()))
                 .nextBooking(item.getNextBooking() == null ? null : BookingMapper.toDto(item.getNextBooking()))

@@ -87,14 +87,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingOutDto> findAll(Long userId, State state) {
+    public Collection<BookingOutDto> findAll(Long userId, State state, Integer from, Integer size) {
         var booker = userService.findById(userId);
-        return BookingMapper.toDto(stateStrategyFactory.findStrategy(state).findBookingList(booker, false));
+        return BookingMapper.toDto(stateStrategyFactory.findStrategy(state).findBookingList(booker, false, from, size));
     }
 
     @Override
-    public Collection<BookingOutDto> findAllOwner(Long userId, State state) {
+    public Collection<BookingOutDto> findAllOwner(Long userId, State state, Integer from, Integer size) {
         var user = userService.findById(userId);
-        return BookingMapper.toDto(stateStrategyFactory.findStrategy(state).findBookingList(user, true));
+        return BookingMapper.toDto(stateStrategyFactory.findStrategy(state).findBookingList(user, true, from, size));
     }
 }
