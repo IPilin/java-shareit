@@ -42,7 +42,7 @@ public class BookingController {
 
 	@GetMapping
 	public ResponseEntity<Object> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-											 @RequestParam(required = false, defaultValue = "ALL") BookingState state,
+											 @RequestParam(value = "state", required = false, defaultValue = "ALL") BookingState state,
 											 @RequestParam(value = "from", defaultValue = "0") @PositiveOrZero int from,
 											 @RequestParam(value = "size", defaultValue = "5") @Positive int size) {
 		return bookingClient.getBookings(userId, state, from, size);

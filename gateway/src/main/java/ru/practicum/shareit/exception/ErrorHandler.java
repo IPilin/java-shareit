@@ -8,23 +8,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.validation.ConstraintViolationException;
-
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequestException(final IllegalArgumentException e) {
-        log.error(e.getLocalizedMessage(), e.getMessage());
+    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleControllerArgumentNotValidException(final ConstraintViolationException e) {
-        log.error("{}{}", e.getLocalizedMessage(), e.getMessage());
-        return new ErrorResponse("Controller argument not valid");
     }
 
     @ExceptionHandler
@@ -34,16 +24,9 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
-        log.error("{}{}", e.getLocalizedMessage(), e.getMessage());
-        return new ErrorResponse("Method argument not valid");
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(final Throwable e) {
-        log.error("{}{}", e.getLocalizedMessage(), e.getMessage());
-        return new ErrorResponse("Unexpected error");
+    public ErrorResponse handleException(Throwable e) {
+        log.error(e.getLocalizedMessage(), e.getMessage());
+        return new ErrorResponse(e.getMessage());
     }
 }
